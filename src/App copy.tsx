@@ -6,86 +6,73 @@ type OperatorFunctions = {
   [key: string]: OperatorFunction;
 };
 
-const operatorfunctionObj: OperatorFunctions = {
+const operatorfunctions = (): OperatorFunctions => ({
   "+": (a, b) => a + b,
   "-": (a, b) => a - b,
   "/": (a, b) => a / b,
   "*": (a, b) => a * b,
-};
-
-const numbersAndSymbols = [
-  "+",
-  "-",
-  "*",
-  "/",
-  "7",
-  "8",
-  "9",
-  "C",
-  "4",
-  "5",
-  "6",
-  "=",
-  "1",
-  "2",
-  "3",
-  "0",
-  ".",
-];
+});
 
 function App() {
   const [screenResult, setScreenResult] = useState("");
   const [result, setResult] = useState("");
 
-  const operationCharArr = ["/", "*", "+", "-"];
-  const resetOperation = () => {
-    setScreenResult("");
-    setResult("");
-  };
-  console.log(screenResult, "screenResult");
-  console.log(result, "resu;t");
+  const numbersAndSymbols = [
+    "+",
+    "-",
+    "*",
+    "/",
+    "7",
+    "8",
+    "9",
+    "C",
+    "4",
+    "5",
+    "6",
+    "=",
+    "1",
+    "2",
+    "3",
+    "0",
+    ".",
+  ];
 
-  const onClickElements = (char: string) => {
-    if (char === "C") {
-      resetOperation();
-      return;
-    }
-
-    if (operationCharArr.includes(char)) {
+  const onClickElements = (el: string) => {
+    if (el === "C") {
+      reset();
+    } else if (["/", "*", "+", "-"].includes(el)) {
       setScreenResult(screenResult.replace(/[+\-*/]/g, ""));
-      setResult(state => state + char);
-      return;
+      setResult(state => state + el);
+    } else {
+      setScreenResult(state => state + el);
+      setResult(state => state + el);
     }
 
     const resultLastCharacter = result[result.length - 1];
-
-    if (operationCharArr.includes(resultLastCharacter)) {
-      setScreenResult(char);
+    if (["/", "*", "+", "-"].includes(resultLastCharacter)) {
+      setScreenResult(el);
       return;
     }
 
-    if (char === "=") {
+    if (el === "=") {
       const splitOperator = result.split(/([+\-*/])/);
-
       if (splitOperator.length !== 3) {
         console.log(splitOperator);
         alert("숫자를 제대로 입력해 주세용!");
-        resetOperation();
-        return;
+        reset();
+      } else {
+        console.log(splitOperator);
+        const operators = operatorfunctions();
+        const operationResult = operators[splitOperator[1]](
+          Number(splitOperator[0]),
+          Number(splitOperator[2])
+        );
+
+        const roundedResult = parseFloat(operationResult.toFixed(10));
+        setResult(roundedResult.toString());
+        setScreenResult(roundedResult.toString());
       }
-
-      const operationResult = operatorfunctionObj[splitOperator[1]](
-        Number(splitOperator[0]),
-        Number(splitOperator[2])
-      );
-
-      const roundedResult = parseFloat(operationResult.toFixed(10)).toString();
-      setResult(roundedResult);
-      setScreenResult(roundedResult);
     }
-
-    setScreenResult(state => state + char);
-    setResult(state => state + char);
   };
 
   /*
@@ -94,6 +81,11 @@ function App() {
   2. 1번과 같은 이유로 1 + = 이런식으로 클릭해도 59번줄의 splitOperator.length가 3이 되면서 alert창이 안나옴
   
   */
+  const reset = () => {
+    setScreenResult("");
+    setResult("");
+  };
+
   // console.log(result, "result");
   // console.log(screenResult, "screenResult");
 
