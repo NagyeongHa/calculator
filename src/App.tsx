@@ -42,8 +42,26 @@ function App() {
     setScreenResult("");
     setResult("");
   };
-  console.log(screenResult, "screenResult");
-  console.log(result, "resu;t");
+
+  const operationEqualSign = () => {
+    const splitOperator = result.split(/([+\-*/])/);
+
+    if (splitOperator.length !== 3) {
+      console.log(splitOperator);
+      alert("숫자를 제대로 입력해 주세용!");
+      resetOperation();
+      return;
+    }
+
+    const operationResult = operatorfunctionObj[splitOperator[1]](
+      Number(splitOperator[0]),
+      Number(splitOperator[2])
+    );
+
+    const roundedResult = parseFloat(operationResult.toFixed(10)).toString();
+    setResult(roundedResult);
+    setScreenResult(roundedResult);
+  };
 
   const onClickElements = (char: string) => {
     if (char === "C") {
@@ -57,6 +75,9 @@ function App() {
       return;
     }
 
+    setScreenResult(state => state + char);
+    setResult(state => state + char);
+
     const resultLastCharacter = result[result.length - 1];
 
     if (operationCharArr.includes(resultLastCharacter)) {
@@ -65,27 +86,8 @@ function App() {
     }
 
     if (char === "=") {
-      const splitOperator = result.split(/([+\-*/])/);
-
-      if (splitOperator.length !== 3) {
-        console.log(splitOperator);
-        alert("숫자를 제대로 입력해 주세용!");
-        resetOperation();
-        return;
-      }
-
-      const operationResult = operatorfunctionObj[splitOperator[1]](
-        Number(splitOperator[0]),
-        Number(splitOperator[2])
-      );
-
-      const roundedResult = parseFloat(operationResult.toFixed(10)).toString();
-      setResult(roundedResult);
-      setScreenResult(roundedResult);
+      operationEqualSign();
     }
-
-    setScreenResult(state => state + char);
-    setResult(state => state + char);
   };
 
   /*
